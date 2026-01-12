@@ -1,8 +1,16 @@
 # Changelog
 
 ## 0.1.0
-- Initial public release.
-- CLI: `reposcope analyze <path|url>` generates `.reposcope/` reports.
-- Optional AI explanations mode (`--ai`) that explains existing heuristic findings.
-- Shareable outputs: `.reposcope/SUMMARY.md`.
-- GitHub Action: upload `.reposcope/` as artifacts and optional PR comment.
+
+### Initial public release
+
+- CLI: `reposcope analyze <path|url>` generates `.reposcope/` reports
+- Reports:
+  - ARCHITECTURE.md
+  - RISKS.md
+  - ONBOARDING.md
+  - SUMMARY.md / SUMMARY.json
+- Optional AI explanations mode (`--ai`) for explaining existing findings
+- GitHub Action:
+  - Uploads `.reposcope/` as workflow artifacts
+  - Optional concise PR comment

@@ -1,6 +1,7 @@
 name: RepoScope Analyze Repo
 description: Run RepoScope on a repository and upload .reposcope/ as workflow artifacts. Optionally post a concise PR comment.
-author: reposcope-ai
+author: RepoScope AI
+
 branding:
   icon: book
   color: blue
@@ -8,27 +9,21 @@ branding:
 inputs:
   python-version:
     description: Python version to use
-    required: false
     default: "3.11"
   install-source:
     description: Install RepoScope from PyPI (pypi) or from this action repository (repo)
-    required: false
     default: "pypi"
   reposcope-version:
     description: RepoScope version to install from PyPI
-    required: false
     default: "latest"
   enable-ai:
-    description: Enable RepoScope AI explanations mode (requires REPOSCOPE_OPENAI_API_KEY)
-    required: false
+    description: Enable AI explanations mode (requires REPOSCOPE_OPENAI_API_KEY)
     default: "false"
   post-comment:
-    description: Post a concise PR comment with top risks and a link to artifacts
-    required: false
+    description: Post a concise PR comment with top risks and artifact link
     default: "false"
   github-token:
     description: GitHub token used for commenting (required if post-comment is true)
-    required: false
 
 runs:
   using: composite
@@ -67,26 +62,3 @@ runs:
         name: reposcope
         path: .reposcope
         if-no-files-found: error
-
-    - name: Build PR comment
-      if: ${{ inputs.post-comment == 'true' && github.event_name == 'pull_request' }}
-      shell: bash
-      env:
-        REPOSCOPE_WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      run: |
-        python -c "from reposcope.src.report.pr_comment import render_pr_comment; import os; print(render_pr_comment('.reposcope/SUMMARY.json', os.environ.get('REPOSCOPE_WORKFLOW_RUN_URL')))" > reposcope_comment.md
-
-    - name: Post PR comment
-      if: ${{ inputs.post-comment == 'true' && github.event_name == 'pull_request' }}
-      uses: actions/github-script@v7
-      with:
-        github-token: ${{ inputs.github-token }}
-        script: |
-          const fs = require('fs');
-          const body = fs.readFileSync('reposcope_comment.md', 'utf8');
-          await github.rest.issues.createComment({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            issue_number: context.payload.pull_request.number,
-            body
-          });
