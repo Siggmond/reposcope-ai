@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+
+# Build artifacts
+dist/
+build/
+
+# RepoScope output
+.reposcope/
+
+# OS / IDE
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

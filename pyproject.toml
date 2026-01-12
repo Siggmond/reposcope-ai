@@ -1,0 +1,50 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "reposcope-ai"
+version = "0.1.0"
+description = "CLI tool that analyzes a Git repository and generates actionable reports"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "RepoScope AI" }]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Documentation",
+  "Topic :: Software Development :: Quality Assurance",
+]
+keywords = ["github", "repo", "analysis", "cli", "onboarding", "technical-debt"]
+dependencies = [
+  "typer>=0.9.0",
+  "rich>=13.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/reposcope-ai/reposcope"
+Repository = "https://github.com/reposcope-ai/reposcope"
+Issues = "https://github.com/reposcope-ai/reposcope/issues"
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0.0",
+]
+ai = []
+
+[project.scripts]
+reposcope = "reposcope.src.cli.main:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["reposcope"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
