@@ -26,6 +26,34 @@ def _top_risks(summary: dict) -> list[str]:
     return out[:3]
 
 
+def _pr_impact_lines(summary: dict) -> list[str]:
+    pr = summary.get("pr_impact")
+    if not pr:
+        return []
+
+    touched = pr.get("touched") or {}
+    out: list[str] = []
+    out.append("PR impact (deterministic):")
+
+    for key, label in [
+        ("entrypoints", "entrypoints"),
+        ("god_files", "god files"),
+        ("large_files", "large files"),
+        ("dead_code", "dead code"),
+    ]:
+        items = touched.get(key) or []
+        if not items:
+            continue
+        out.append(f"- **[{label}]** {len(items)} file(s)")
+        for fp in items[:10]:
+            out.append(f"  - `{fp}`")
+
+    if len(out) == 1:
+        out.append("- **[none detected]**")
+
+    return out
+
+
 def render_pr_comment(summary_json_path: str, workflow_run_url: str | None) -> str:
     summary_path = Path(summary_json_path)
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
@@ -45,6 +73,11 @@ def render_pr_comment(summary_json_path: str, workflow_run_url: str | None) -> s
     else:
         lines.extend(top)
     lines.append("")
+
+    pr_lines = _pr_impact_lines(summary)
+    if pr_lines:
+        lines.extend(pr_lines)
+        lines.append("")
 
     if workflow_run_url:
         lines.append(f"Artifacts: {workflow_run_url}")
