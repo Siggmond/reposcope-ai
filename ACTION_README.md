@@ -37,7 +37,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: Siggmond/reposcope-ai@v0.10.0
-> RepoScope v0.10.0 introduces PR impact analysis and onboarding intelligence.
         with:
           post-comment: "true"
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -63,3 +62,4 @@ jobs:
 - `.reposcope/` is uploaded as an artifact named **reposcope**
 - PR comments are intentionally short and link to full artifacts
 - AI explanations are explain-only and never introduce new findings
+> RepoScope v0.10.0 introduces PR impact analysis and onboarding intelligence.
