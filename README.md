@@ -48,6 +48,25 @@ All outputs are:
 
 ---
 
+## 🧭 What RepoScope Helps You Decide
+
+RepoScope is not a linter and not a code-quality score.
+
+It helps you answer **practical questions fast**:
+
+- Where should I start reading?
+- Which files should I avoid touching first?
+- Is this PR risky based on what changed?
+- Are there hidden structural smells?
+- Who owns this code and is it a bus-factor risk?
+
+All answers are:
+- Deterministic by default
+- Explainable
+- Written for humans
+
+---
+
 ## 👥 Who This Is For
 
 - **Contributors** — get context before opening a PR  
@@ -142,7 +161,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Siggmond/reposcope-ai@v0.1.0
+      - uses: Siggmond/reposcope-ai@v0.10.0
         with:
           post-comment: "true"
           github-token: ${{ secrets.GITHUB_TOKEN }}
