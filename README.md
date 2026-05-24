@@ -1,149 +1,170 @@
 # RepoScope AI
 
-![PyPI](https://img.shields.io/pypi/v/reposcope-ai)
-![Python](https://img.shields.io/pypi/pyversions/reposcope-ai)
-![License](https://img.shields.io/github/license/Siggmond/reposcope-ai)
-![GitHub Actions](https://img.shields.io/github/actions/workflow/status/Siggmond/reposcope-ai/reposcope.yml)
-![GitHub stars](https://img.shields.io/github/stars/Siggmond/reposcope-ai?style=social)
+[![PyPI](https://img.shields.io/pypi/v/reposcope-ai)](https://pypi.org/project/reposcope-ai/)
+[![Python](https://img.shields.io/pypi/pyversions/reposcope-ai)](https://pypi.org/project/reposcope-ai/)
+[![License](https://img.shields.io/github/license/Siggmond/reposcope-ai)](LICENSE)
+[![RepoScope workflow](https://img.shields.io/github/actions/workflow/status/Siggmond/reposcope-ai/reposcope.yml?label=workflow)](https://github.com/Siggmond/reposcope-ai/actions/workflows/reposcope.yml)
+[![GitHub stars](https://img.shields.io/github/stars/Siggmond/reposcope-ai?style=social)](https://github.com/Siggmond/reposcope-ai)
 ![CLI](https://img.shields.io/badge/interface-CLI-blue)
 ![GitHub Action](https://img.shields.io/badge/GitHub-Action-2088FF)
 
+**RepoScope AI** is a deterministic **CLI + GitHub Action** for turning an unfamiliar repository into practical architecture, risk, onboarding, and summary documentation. It helps maintainers, contributors, freelancers, consultants, and onboarding engineers build useful context quickly from a local repo or GitHub URL.
 
-
-**RepoScope AI** is a fast, deterministic **CLI + GitHub Action** that audits a Git repository and generates
-**clear, actionable documentation** — so you can understand any codebase in minutes, not hours.
-
-It is designed for **developers, contributors, freelancers, and maintainers** who need to answer one question quickly:
-
-> *“What am I looking at, and where should I start?”*
+RepoScope is not a linter, not a security scanner, and not a magic AI code reviewer. By default it uses deterministic repository analysis and writes versionable Markdown and JSON artifacts. Optional AI mode can explain findings that already exist in the structured analysis, but it does not discover new issues.
 
 ---
 
-## 🚨 The Problem
+## Quick Reviewer Path
 
-Opening an unfamiliar repository usually means wasting time figuring out:
-- Where is the entry point?
-- How is the project structured?
-- Which files are risky or too large?
-- Where can I safely make changes?
-- What should a new contributor know first?
+If you have five minutes, this is the fastest way to evaluate the project.
 
-Most repositories **do not document these answers**.
+**Problem it solves:** unfamiliar repositories often lack clear architecture notes, onboarding paths, risk summaries, and "where should I start?" guidance. RepoScope generates those first-pass documents from the repository itself.
 
----
-
-## ✅ The Solution
-
-RepoScope analyzes a repository (local path or GitHub URL) and generates a small set of **opinionated, human‑readable reports**:
-
-- **ARCHITECTURE.md** — high‑level project structure and layout
-- **RISKS.md** — large files, missing tests, structural smells
-- **ONBOARDING.md** — guidance for new contributors
-- **SUMMARY.md / SUMMARY.json** — concise, shareable snapshot
-
-All outputs are:
-- Deterministic by default
-- Versionable (plain Markdown / JSON)
-- Designed to be read by humans, not dashboards
-
----
-
-## 🧭 What RepoScope Helps You Decide
-
-RepoScope is not a linter and not a code-quality score.
-
-It helps you answer **practical questions fast**:
-
-- Where should I start reading?
-- Which files should I avoid touching first?
-- Is this PR risky based on what changed?
-- Are there hidden structural smells?
-- Who owns this code and is it a bus-factor risk?
-
-All answers are:
-- Deterministic by default
-- Explainable
-- Written for humans
-
----
-
-## 👥 Who This Is For
-
-- **Contributors** — get context before opening a PR  
-- **Freelancers / consultants** — audit a repo quickly and surface risk areas  
-- **New team members** — know where to start and what to avoid  
-- **Maintainers** — document repo shape and obvious smells automatically  
-
-If you’ve ever said *“I need 30 minutes just to understand this repo”*, this tool is for you.
-
----
-
-## 📦 Installation
+**Install the CLI:**
 
 ```bash
 pip install reposcope-ai
 ```
 
-Development install (editable):
+**Run it on a local repository:**
+
+```bash
+reposcope analyze .
+```
+
+**Run it on a GitHub repository URL:**
+
+```bash
+reposcope analyze https://github.com/user/repo
+```
+
+**Find the generated reports:**
+
+```text
+.reposcope/
+|-- ARCHITECTURE.md
+|-- RISKS.md
+|-- ONBOARDING.md
+|-- SUMMARY.md
+`-- SUMMARY.json
+```
+
+**Use the GitHub Action:** the composite action sets up Python, installs RepoScope from PyPI by default, runs `reposcope analyze .`, and uploads `.reposcope/` as a workflow artifact named `reposcope`.
+
+```yaml
+- uses: actions/checkout@v4
+- uses: Siggmond/reposcope-ai@v0.10.0
+```
+
+**Understand AI mode:** AI is disabled by default. With `--ai` and `REPOSCOPE_OPENAI_API_KEY`, RepoScope asks AI only to explain deterministic findings already produced by the analyzer. If the key is missing or the provider fails, deterministic reports are still written.
+
+**Review tests/checks:** tests live in `tests/` and use `pytest`. For local development, install with `pip install -e ".[dev]"` and run `pytest`.
+
+---
+
+## What RepoScope Helps You Decide
+
+RepoScope is built for practical repository orientation, not for abstract scoring. It helps reviewers and maintainers answer questions such as:
+
+- Where should I start reading?
+- Which files look risky to touch first?
+- What changed in a PR, and did it touch known risk areas?
+- Are there obvious structural smells worth human review?
+- Are ownership or inactivity hints visible from Git history?
+
+The answers are deterministic by default, explainable, and written for humans.
+
+---
+
+## What This Project Proves
+
+RepoScope AI demonstrates practical developer-tooling work:
+
+- CLI product design with a small, memorable command surface: `reposcope analyze <target>`.
+- Repository loading for both local paths and GitHub URLs.
+- Deterministic report generation that can run without networked AI services.
+- Markdown and JSON artifacts designed for humans, CI artifacts, and downstream automation.
+- GitHub Action integration through a composite `action.yml`.
+- Architecture, risk, onboarding, ownership, and PR-impact documentation generation.
+- Optional AI explanations that explain existing findings only.
+- Fallback behavior when AI is unavailable or disabled.
+- Honest handling of heuristic limits instead of claiming perfect repository understanding.
+
+PR comment support is partially represented by `reposcope/src/report/pr_comment.py`, which renders a concise comment from `SUMMARY.json`. The current composite action uploads artifacts but does not yet post that comment automatically.
+
+---
+
+## Installation
+
+```bash
+pip install reposcope-ai
+```
+
+Development install:
+
 ```bash
 pip install -e .
 ```
 
-Install dev dependencies (tests):
+Install test dependencies:
+
 ```bash
 pip install -e ".[dev]"
 ```
 
 ---
 
-## ⚡ 30‑Second Repo Audit
+## CLI Usage
 
-Analyze a GitHub repository:
-```bash
-reposcope analyze https://github.com/user/repo
-```
+Analyze the current repository:
 
-Analyze a local repository:
 ```bash
 reposcope analyze .
 ```
 
-Generated output:
-```text
-.reposcope/
-├── ARCHITECTURE.md
-├── RISKS.md
-├── ONBOARDING.md
-├── SUMMARY.md
-└── SUMMARY.json
-```
-
----
-
-## 🧠 Optional AI Explanations (Opt‑In)
-
-RepoScope supports an **AI explanations mode** that adds explanations **only** to existing findings.
+Analyze a GitHub repository:
 
 ```bash
-set REPOSCOPE_OPENAI_API_KEY=YOUR_KEY
-reposcope analyze . --ai
+reposcope analyze https://github.com/user/repo
 ```
 
-### AI design rules (important):
-- AI **never discovers new issues**
-- AI receives **structured findings only**
-- All AI text is clearly labeled as **AI‑assisted explanation**
-- If AI fails, RepoScope silently falls back to non‑AI output
+Write reports somewhere else:
 
-AI is **disabled by default**.
+```bash
+reposcope analyze . --output reports/reposcope
+```
+
+Enable optional heuristic analyzers:
+
+```bash
+reposcope analyze . --aggressive
+```
+
+Compute deterministic PR impact against a Git base ref:
+
+```bash
+reposcope analyze . --diff main
+```
 
 ---
 
-## 🤖 GitHub Action (PR Integration)
+## Generated Reports
 
-RepoScope ships with a first‑class GitHub Action.
+RepoScope writes reports to `.reposcope/` unless `--output` is provided:
 
-Create `.github/workflows/reposcope.yml`:
+- `ARCHITECTURE.md` - main folders, entry points, and best-effort data-flow notes.
+- `RISKS.md` - deterministic findings such as large files, god files, missing tests, circular imports, and other structural smells.
+- `ONBOARDING.md` - first-hour checklist, where-to-start guidance, safe-ish files, risky files, run hints, and ownership hints when Git history is available.
+- `SUMMARY.md` - concise human-readable scan summary.
+- `SUMMARY.json` - structured scan output for automation, PR comments, or future integrations.
+
+The reports are meant to be readable in pull requests, workflow artifacts, internal onboarding docs, or a repository's own documentation folder.
+
+---
+
+## GitHub Action
+
+RepoScope ships with a composite GitHub Action. A minimal workflow looks like this:
 
 ```yaml
 name: RepoScope
@@ -154,7 +175,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   analyze:
@@ -162,60 +182,96 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: Siggmond/reposcope-ai@v0.10.0
-        with:
-          post-comment: "true"
-          github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-The workflow:
-- Runs RepoScope on the repo
-- Uploads `.reposcope/` as artifacts
-- Optionally comments top risks on the PR (opt‑in)
+The action currently:
+
+- Sets up Python.
+- Installs `reposcope-ai` from PyPI by default.
+- Runs `reposcope analyze .`.
+- Uploads `.reposcope/` as an artifact named `reposcope`.
+
+Useful inputs:
+
+| Input | Purpose | Default |
+| --- | --- | --- |
+| `python-version` | Python version used by the action | `3.11` |
+| `install-source` | Install from PyPI (`pypi`) or this action repository (`repo`) | `pypi` |
+| `reposcope-version` | PyPI version to install, or `latest` | `latest` |
+| `enable-ai` | Run `reposcope analyze . --ai` | `false` |
+
+To enable AI explanations in the action, pass the flag and provide the API key as an environment variable:
+
+```yaml
+- uses: Siggmond/reposcope-ai@v0.10.0
+  with:
+    enable-ai: "true"
+  env:
+    REPOSCOPE_OPENAI_API_KEY: ${{ secrets.REPOSCOPE_OPENAI_API_KEY }}
+```
+
+Note: `action.yml` contains `post-comment` and `github-token` inputs, but the current composite action does not post PR comments. Treat them as reserved until a posting step is wired in.
 
 ---
 
-## 🏷️ One‑Shot Badge
+## AI Mode Boundaries
 
-```md
-[![RepoScope](https://img.shields.io/badge/RepoScope-Analyzed-blue)](https://github.com/OWNER/REPO/actions)
+AI mode is intentionally narrow:
+
+- AI is disabled by default.
+- AI only receives structured findings already produced by deterministic analysis.
+- AI output is labeled as `AI-assisted explanation` when it appears in reports.
+- AI does not discover new findings, assign hidden scores, or replace deterministic output.
+- If the API key is missing, the provider fails, or the AI response cannot be parsed, RepoScope still writes deterministic reports.
+- There is no hidden black-box scoring path.
+
+Use AI mode when a short explanation would help a human understand an existing finding. Do not use it as evidence that RepoScope found additional issues.
+
+```bash
+set REPOSCOPE_OPENAI_API_KEY=YOUR_KEY
+reposcope analyze . --ai
+```
+
+On macOS/Linux:
+
+```bash
+export REPOSCOPE_OPENAI_API_KEY=YOUR_KEY
+reposcope analyze . --ai
 ```
 
 ---
 
-## 📄 Example Output
+## Current Scope / Honest Limitations
 
-Excerpt from `RISKS.md`:
+RepoScope is useful as a fast orientation layer, but it is deliberately not a substitute for engineering review:
 
-```text
-## God files (very high line count)
-- src/core/big_file.py (1203 lines)
+- Analysis is heuristic and repository-shape based.
+- Build and run instructions may be inferred and incomplete.
+- Circular import detection is best-effort and currently focused on Python imports.
+- Risk detection highlights structural signals; it is not a security scanner or correctness proof.
+- Optional aggressive analysis can surface noisier heuristic findings and labels them as heuristic.
+- AI mode is optional and does not discover new findings.
+- Results should support human review, onboarding, and triage, not replace them.
+
+---
+
+## Development Checks
+
+```bash
+pip install -e ".[dev]"
+pytest
 ```
 
----
-
-## ⚠️ Limitations (Honest)
-
-- Analysis is heuristic, not static analysis
-- Circular import detection is best‑effort
-- Build/run instructions are inferred and may be incomplete
-- Very large repos may take longer depending on file count
+The current test suite covers smoke scanning, large-file and god-file detection, conservative circular import checks, onboarding ranking, ownership hints, PR impact, and AI fallback behavior.
 
 ---
 
-## 🔐 Trust & Safety
+## Release Note
 
-- Deterministic output by default
-- AI is optional and clearly labeled
-- No hallucinated findings
-- No black‑box scoring
+RepoScope v0.10.0 introduced PR impact analysis and onboarding intelligence.
 
 ---
 
-## 📜 License
+## License
 
 MIT License
-
----
-
-If you maintain repositories, review pull requests, or onboard developers,
-RepoScope AI is built to save you time.

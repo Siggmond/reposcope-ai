@@ -6,7 +6,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: write
 
 jobs:
   analyze:
@@ -16,7 +15,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: RepoScope
-        uses: reposcope-ai/analyze-repo@v1
+        uses: ./
         with:
-          post-comment: "true"
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          install-source: repo

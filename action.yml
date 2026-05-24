@@ -1,5 +1,5 @@
 name: RepoScope Analyze Repo
-description: Run RepoScope on a repository and upload .reposcope/ as workflow artifacts. Optionally post a concise PR comment.
+description: Run RepoScope on a repository and upload .reposcope/ as workflow artifacts.
 author: RepoScope AI
 
 branding:
@@ -20,10 +20,10 @@ inputs:
     description: Enable AI explanations mode (requires REPOSCOPE_OPENAI_API_KEY)
     default: "false"
   post-comment:
-    description: Post a concise PR comment with top risks and artifact link
+    description: Reserved; the current composite action does not post PR comments
     default: "false"
   github-token:
-    description: GitHub token used for commenting (required if post-comment is true)
+    description: Reserved with post-comment; not used by the current composite action
 
 runs:
   using: composite
